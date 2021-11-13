@@ -1,2 +1,3 @@
 # devui-cli
-devui devui-cli cli
+
+`devui-cli` 孵化
