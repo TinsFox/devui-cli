@@ -1,0 +1,49 @@
+{
+  "name": "@devui/devui-cli",
+  "version": "0.0.1",
+  "description": "A scaffold of devui.",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "bin": {
+    "devui-cli": "./bin.js"
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "files": [
+    "lib",
+    "site",
+    "template",
+    "bin.js",
+    "preset.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TinsFox/devui-cli.git"
+  },
+  "keywords": [
+    "devui",
+    "devui-cli",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "author": "TinsFox",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TinsFox/devui-cli/issues"
+  },
+  "homepage": "https://github.com/TinsFox/devui-cli#readme",
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@types/markdown-it": "^12.2.3",
+    "commander": "^8.2.0",
+    "markdown-it": "^12.2.0",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
