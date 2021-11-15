@@ -5,8 +5,9 @@
   "scripts": {
     "docs:dev": "pnpm dev --filter @devui/cli-docs",
     "build:cli": "pnpm build --filter @devui/devui-cli",
+    "build:fabric": "pnpm build --filter @devui/fabric",
     "preinstall": "npx only-allow pnpm",
-    "prepare": "pnpm build:cli"
+    "prepare": "pnpm build:cli && pnpm build:fabric"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,12 @@
   "bugs": {
     "url": "https://github.com/TinsFox/devui-cli/issues"
   },
-  "homepage": "https://github.com/TinsFox/devui-cli#readme"
+  "homepage": "https://github.com/TinsFox/devui-cli#readme",
+  "devDependencies": {
+    "@devui/fabric": "workspace:*"
+  },
+  "engines": {
+    "node": ">=12",
+    "pnpm": ">=6"
+  }
 }
