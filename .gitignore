@@ -1,0 +1,16 @@
+.idea
+.DS_Store
+
+# npm
+node_modules
+
+# pnpm
+pnpm-lock.yaml
+
+# log
+*.log*
+
+# dist file
+es
+lib
+dist

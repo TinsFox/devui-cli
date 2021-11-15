@@ -1,0 +1,30 @@
+{
+  "name": "@devui/cli-docs",
+  "version": "0.0.1",
+  "description": "Docs of devui.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "devui-cli dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TinsFox/devui-cli.git"
+  },
+  "keywords": [
+    "devui",
+    "devui-cli",
+    "cli",
+    "docs",
+    "demo"
+  ],
+  "author": "TinsFox",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TinsFox/devui-cli/issues"
+  },
+  "homepage": "https://github.com/TinsFox/devui-cli#readme",
+  "dependencies": {
+    "@devui/devui-cli": "workspace:*"
+  }
+}
