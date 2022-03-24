@@ -13,7 +13,7 @@
 
 ```
 packages
-├── devui-cli
+├── devui-cli-core
 │    ├─ docs                    # cli 文档
 │    ├─ lib                     # cli 构建产物
 │    ├─ stie                    # 文档系统模板
