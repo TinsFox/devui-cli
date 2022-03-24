@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A scaffold of devui.",
   "scripts": {
+    "dev": "pnpm dev --filter @devui/cli-test",
     "preinstall": "npx only-allow pnpm"
   },
   "repository": {

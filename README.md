@@ -10,31 +10,72 @@
 > 项目目前约束仅使用 [pnpm](https://pnpm.io/zh/) 作为包管理器，请确保环境中存在 `pnpm`再尝试运行本项目
 
 ## 项目结构
+devui-cli-core
+```
+.
+├── README.md
+├── bin
+│   ├── devui-cli.js
+│   └── openChrome.applescript
+├── package.json
+├── rollup.config.js
+├── site                
+│   ├── components
+│   │   ├── Header
+│   │   ├── SiderMenu
+│   │   ├── SlugNav
+│   │   ├── container
+│   │   ├── content
+│   │   ├── footer
+│   │   ├── layout
+│   │   └── typings.d.ts
+│   ├── index.html
+│   ├── src
+│   │   ├── App.css
+│   │   ├── README.md
+│   │   ├── main.tsx
+│   │   ├── pages
+│   │   ├── routes.tsx
+│   │   └── vite-env.d.ts
+│   └── style
+│       ├── base.less
+│       └── font.less
+├── src
+│   └── node
+│       ├── cli.ts
+│       ├── config.ts
+│       ├── constants.ts
+│       ├── index.ts
+│       ├── logger.ts
+│       ├── server
+│       ├── tsconfig.json
+│       └── utils.ts
+├── text.txt
+└── tsconfig.base.json
+
+16 directories, 23 files
 
 ```
-packages
-├── devui-cli-core
-│    ├─ docs                    # cli 文档
-│    ├─ lib                     # cli 构建产物
-│    ├─ stie                    # 文档系统模板
-│    └─ src                     # 组件入口
-│       ├─ commands             # cli 命令集合
-│       ├─ common               # 公共模块：常量、路径等
-│       ├─ complier             # 编译相关：site、
-│       ├─ config               # cli 配置
-│       ├─ cli.ts               # cli 命令
-│       ├─ index.ts             # cli 命令注册入口
-│    ├─ bin.js                  # devui-cli 入口
-│    ├─ package.json        
-│    └─ READMEmd                # 中文文档
-└─ docs-demo                    # cli 测试demo，组件库结构雏形
-   ├─ docs                      # 站点入口文档
-   ├─ src                       # 组件入口
-   │   └─ action-bar            # cli 命令集合
-   │       └─ README.zh-CN.md  # 中文文档
-   ├─ devui.config.js           # devui-cli 配置
-   └─ README.zh-CN.md           # 中文文档
 ```
+
+docs-test，devui-cli测试
+```
+.
+├── README.md
+├── devui.config.ts
+├── docs
+│   └── markdown # 站点文档，贡献指南 快速上手等
+├── package.json
+├── src                 
+│   ├── action-bar      # 组件目录
+│   │   └── README.md   # 组件文档
+│   └── button
+│       └── README.md
+└── text.txt
+
+5 directories, 10 files
+```
+
 
 ## 开发
 
@@ -42,6 +83,8 @@ packages
 # 安装依赖
 pnpm install
 
-# 运行cli demo
-pnpm docs:dev 
+# 运行cli dev
+pnpm dev --filter @devui/devui-cli
+# 运行cli 站点构建
+pnpm dev --filter @devui/cli-test
 ```

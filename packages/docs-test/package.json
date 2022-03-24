@@ -1,5 +1,5 @@
 {
-  "name": "@devui/cli-docs",
+  "name": "@devui/cli-test",
   "version": "0.0.1",
   "description": "Docs of devui.",
   "main": "index.js",
