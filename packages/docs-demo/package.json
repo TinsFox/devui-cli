@@ -4,8 +4,9 @@
   "description": "Docs of devui.",
   "main": "index.js",
   "scripts": {
-    "dev": "devui-cli dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cli-dev": "devui-cli dev",
+    "cli-version": "devui-cli -v",
+    "cli-help": "devui-cli -h"
   },
   "repository": {
     "type": "git",
