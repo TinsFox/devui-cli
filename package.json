@@ -25,15 +25,31 @@
     "commit-msg": "pnpm exec ts-node scripts/verifyCommit.ts $1"
   },
   "homepage": "https://github.com/TinsFox/devui-cli#readme",
+  "lint-staged": {
+    "*": [
+      "prettier --write --ignore-unknown"
+    ],
+    "packages/*/{src,types}/**/*.ts": [
+      "eslint --ext .ts"
+    ],
+    "packages/**/*.d.ts": [
+      "eslint --ext .ts"
+    ]
+  },
   "devDependencies": {
+    "eslint": "^8.11.0",
+    "eslint-define-config": "^1.3.0",
+    "eslint-plugin-node": "^11.1.0",
     "@devui/fabric": "workspace:*",
+    "@types/fs-extra": "^9.0.13",
     "@types/node": "^16.11.26",
+    "fs-extra": "^10.0.1",
+    "lint-staged": "^12.3.7",
+    "picocolors": "^1.0.0",
+    "prettier": "^2.4.1",
     "simple-git-hooks": "^2.7.0",
     "ts-node": "^10.4.0",
-    "typescript": "^4.6.2",
-    "picocolors": "^1.0.0",
-    "fs-extra": "^10.0.1",
-    "@types/fs-extra": "^9.0.13"
+    "typescript": "^4.6.2"
   },
   "engines": {
     "node": ">=12",
