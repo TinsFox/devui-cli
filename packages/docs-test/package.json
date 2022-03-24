@@ -4,7 +4,7 @@
   "description": "Docs of devui.",
   "main": "index.js",
   "scripts": {
-    "cli-dev": "devui-cli dev",
+    "dev": "devui-cli dev",
     "cli-version": "devui-cli -v",
     "cli-help": "devui-cli -h"
   },

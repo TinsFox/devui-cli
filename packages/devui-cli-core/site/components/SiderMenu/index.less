@@ -1,0 +1,35 @@
+.nav {
+  flex: 0 0 240px;
+  background-color: #fff;
+  border-right: 1px solid #e7ebf0;
+  overflow-y: auto;
+  padding: 0 10px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 6px;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(69, 90, 100, 0.2);
+  }
+
+  &__group {
+    margin-bottom: 16px;
+    padding-left: 6px;
+  }
+
+  &__title {
+    padding: 8px 0 8px 24px;
+    color: #1d1d1d;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 28px;
+  }
+}
