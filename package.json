@@ -3,11 +3,7 @@
   "version": "0.0.1",
   "description": "A scaffold of devui.",
   "scripts": {
-    "docs:dev": "pnpm dev --filter @devui/cli-docs",
-    "build:cli": "pnpm build --filter @devui/devui-cli",
-    "build:fabric": "pnpm build --filter @devui/fabric",
-    "preinstall": "npx only-allow pnpm",
-    "prepare": "pnpm build:cli && pnpm build:fabric"
+    "preinstall": "npx only-allow pnpm"
   },
   "repository": {
     "type": "git",
