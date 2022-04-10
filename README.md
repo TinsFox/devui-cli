@@ -10,7 +10,9 @@
 > 项目目前约束仅使用 [pnpm](https://pnpm.io/zh/) 作为包管理器，请确保环境中存在 `pnpm`再尝试运行本项目
 
 ## 项目结构
-devui-cli-core
+
+### devui-cli-core
+
 ```
 .
 ├── README.md
@@ -19,7 +21,7 @@ devui-cli-core
 │   └── openChrome.applescript
 ├── package.json
 ├── rollup.config.js
-├── site                
+├── site
 │   ├── components
 │   │   ├── Header
 │   │   ├── SiderMenu
@@ -50,15 +52,11 @@ devui-cli-core
 │       ├── server
 │       ├── tsconfig.json
 │       └── utils.ts
-├── text.txt
 └── tsconfig.base.json
-
-16 directories, 23 files
-
-```
 ```
 
-docs-test，devui-cli测试
+### docs-test，devui-cli-core 测试工程
+
 ```
 .
 ├── README.md
@@ -66,16 +64,13 @@ docs-test，devui-cli测试
 ├── docs
 │   └── markdown # 站点文档，贡献指南 快速上手等
 ├── package.json
-├── src                 
+├── src
 │   ├── action-bar      # 组件目录
 │   │   └── README.md   # 组件文档
 │   └── button
 │       └── README.md
 └── text.txt
-
-5 directories, 10 files
 ```
-
 
 ## 开发
 
