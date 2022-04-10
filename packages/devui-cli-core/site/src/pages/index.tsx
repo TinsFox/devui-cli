@@ -1,3 +1,10 @@
+import Header from "../../components/Header";
+
 export default function Index() {
-  return <div>首页</div>
+  return (
+    <div>
+      <Header />
+      主页介绍
+    </div>
+  );
 }

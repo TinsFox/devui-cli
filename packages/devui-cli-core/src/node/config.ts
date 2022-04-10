@@ -273,7 +273,9 @@ export async function loadConfigFromFile(
     throw e;
   }
 }
+// TODO define menu type
 
+// define cli config
 export function defineConfig(config: UserConfigExport): UserConfigExport {
   return config;
 }
