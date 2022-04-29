@@ -4,7 +4,8 @@
   "description": "A scaffold of devui.",
   "scripts": {
     "dev": "pnpm dev --filter @devui/cli-test",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "eslint": "eslint --ext .ts"
   },
   "repository": {
     "type": "git",
