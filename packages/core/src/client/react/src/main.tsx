@@ -7,8 +7,7 @@ import { useRoutes } from "react-router-dom";
 import type { RouteObject } from "react-router-dom";
 import NoMatch from "./pages/404";
 import Index from "./pages";
-import { version, Home } from "site-desktop-shared";
-
+import { config } from "site-config";
 const AppRouters: RouteObject[] = [
   {
     path: "/",
@@ -33,8 +32,8 @@ const AppRouters: RouteObject[] = [
 ];
 
 function App() {
-  console.log(version);
-  console.log(Home);
+  console.log(config);
+  // console.log(documents);
   let element = useRoutes(AppRouters);
   return <>{element}</>;
 }

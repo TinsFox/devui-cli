@@ -19,13 +19,17 @@ export interface ISite {
   nav?: Array<INavItem>;
   description?: string;
 }
-
+/**
+ * User Config
+ */
 export interface UserConfig {
+  // site title
   title?: string;
   mode?: string;
   root?: string;
   build?: any;
   site?: ISite;
+  /* site logo */
   logo?: string;
 }
 
@@ -191,9 +195,7 @@ export async function loadConfigFromFile(
   let isTS = false;
   let isESM = false;
   let dependencies: string[] = [];
-  console.log("resolvedPath", resolvedPath);
   if (configFile) {
-    console.log("explicit config path is always resolved from cwd");
     // explicit config path is always resolved from cwd
     resolvedPath = path.resolve(configFile);
     isTS = configFile.endsWith(".ts");
@@ -202,8 +204,6 @@ export async function loadConfigFromFile(
       isESM = true;
     }
   } else {
-    console.log("isESM", isESM);
-    console.log("isTs", isTS);
     // implicit config file loaded from inline root (if present)
     // otherwise from cwd
     const jsconfigFile = path.resolve(configRoot, "devui.config.js");

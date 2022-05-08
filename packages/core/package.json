@@ -15,7 +15,8 @@
     "bin",
     "dist",
     "types",
-    "site"
+    "site",
+    "src/client"
   ],
   "repository": {
     "type": "git",

@@ -163,7 +163,6 @@ function shimDepsPlugin(deps) {
             }
             transformed[file] = true;
             magicString.overwrite(pos, pos + src.length, replacement);
-            console.log(`shimmed: ${file}`);
           }
 
           if (pattern) {
@@ -179,7 +178,6 @@ function shimDepsPlugin(deps) {
                 `Could not find expected pattern "${pattern}" in file "${file}"`
               );
             }
-            console.log(`shimmed: ${file}`);
           }
 
           return {

@@ -9,8 +9,10 @@ cli
   .option("--host [host]", `[string] specify hostname`)
   .action(async (root: string, options: any) => {
     // output structure is preserved even after bundling so require()
-    // is ok here
     const { createServer } = await import("./server");
+    const { REACT_SITE_DIR1 } = await import("./constants");
+    console.log(REACT_SITE_DIR1);
+
     await createServer();
   });
 

@@ -2,52 +2,54 @@ import type { InlineConfig } from "vite";
 import { resolveConfig } from "../config";
 import { createServer as viteServer } from "vite";
 import colors from "picocolors";
-import { dirname, join } from "path";
+import { join, parse } from "path";
 import react from "@vitejs/plugin-react";
 import { injectHtml } from "vite-plugin-html";
-import {
-  readdirSync,
-  existsSync,
-  readFileSync,
-  outputFileSync,
-} from "fs-extra";
 import glob from "fast-glob";
 import { normalizePath } from "../utils";
-
+import { DOCS_DIR, REACT_SITE_DIR, SITE_CONFIG } from "../constants";
+import { removeExt, smartOutputFile } from "../utils/fs";
+const genImportConfig = () => {
+  return `import config from '${removeExt(normalizePath(""))}';`;
+};
 export async function createServer() {
   await compileSite();
 }
-const CONFIG_FILE_NAME = "devui.config.ts";
-function findRootDir(dir: string): string {
-  if (existsSync(join(dir, CONFIG_FILE_NAME))) {
-    return dir;
-  }
 
-  const parentDir = dirname(dir);
-  if (dir === parentDir) {
-    return dir;
-  }
+const camelizeRE = /-(\w)/g;
+const pascalizeRE = /(\w)(\w*)/g;
 
-  return findRootDir(parentDir);
+export function camelize(str: string): string {
+  return str.replace(camelizeRE, (_, c) => c.toUpperCase());
 }
-export const CWD = process.cwd();
-export const ROOT = findRootDir(CWD);
-export const DOCS_DIR = join(ROOT, "docs");
-export function smartOutputFile(filePath: string, content: string) {
-  if (existsSync(filePath)) {
-    const previousContent = readFileSync(filePath, "utf-8");
 
-    if (previousContent === content) {
-      return;
-    }
-  }
-
-  outputFileSync(filePath, content);
+export function pascalize(str: string): string {
+  return camelize(str).replace(
+    pascalizeRE,
+    (_, c1, c2) => c1.toUpperCase() + c2
+  );
 }
+function formatName(component: string, lang?: string) {
+  component = pascalize(component);
+  if (lang) {
+    return `${component}_${lang.replace("-", "_")}`;
+  }
+  return component;
+}
+// 静态markdown
 function resolveComponentDocuments(dirs: string) {
-  const staticDocs = glob.sync(normalizePath(join(dirs, "**/*.md")));
+  const staticDocs = glob
+    .sync(normalizePath(join(DOCS_DIR, "**/*.md")))
+    .map((path) => {
+      const pairs = parse(path).name.split(".");
+      return {
+        name: formatName(pairs[0], pairs[1]),
+        path,
+      };
+    });
   return staticDocs;
 }
+
 function genImportDocuments(items: any[]) {
   return items
     .map(
@@ -55,32 +57,38 @@ function genImportDocuments(items: any[]) {
     )
     .join("\n");
 }
-function genSiteDesktopShared() {
-  console.log("DOCS_DIR", DOCS_DIR);
-  const dirs = readdirSync(DOCS_DIR);
-  console.log("dirs", dirs);
-  console.log("生成入口文件");
+const genExportAllDocuments = (items: any[]) => {
+  return `export const documents = {
+  ${items.map((item) => item.name).join(",\n  ")}
+};`;
+};
+
+function genSiteConfig() {
   const staticDocuments = resolveComponentDocuments(DOCS_DIR);
-  console.log("componentDocuments", staticDocuments);
   const documents = [...staticDocuments];
+  console.log("genImportDocuments(documents)", genImportDocuments(documents));
+  /**
+   * ${genImportDocuments(documents)}
+${genExportAllDocuments(documents)}
+   */
   const code = `
-${genImportDocuments(documents)}
+export const config ={
+  version:'0.0.1'
+}
+// ${genImportConfig()}
 `;
-  console.log("code", code);
-  // smartOutputFile(SITE_DESKTOP_SHARED_FILE, code);
+  smartOutputFile(SITE_CONFIG, code);
 }
 async function genSiteEntry(): Promise<void> {
   return new Promise((resolve, reject) => {
-    genSiteDesktopShared();
+    genSiteConfig();
     // TODO 没有 resole会停止往下执行
-    // resolve();
+    resolve();
   });
 }
 export async function compileSite() {
   await genSiteEntry();
   const config = await getViteConfigForSiteDev();
-  console.log("config", config);
-
   const server = await viteServer(config);
   await server.listen();
   const info = server.config.logger.info;
@@ -93,7 +101,7 @@ export async function compileSite() {
   );
   server.printUrls();
 }
-
+/* HTML meta */
 function getHTMLMeta(siteConfig: any) {
   const meta = siteConfig.site?.htmlMeta;
   if (meta) {
@@ -101,10 +109,9 @@ function getHTMLMeta(siteConfig: any) {
       .map((key) => `<meta name="${key}" content="${meta[key]}">`)
       .join("\n");
   }
-
   return "";
 }
-
+/* HTML title */
 function getTitle(config: { title: string; description?: string }) {
   let { title } = config;
 
@@ -115,6 +122,7 @@ function getTitle(config: { title: string; description?: string }) {
   return title;
 }
 export async function genDesktop() {}
+
 // doc site config
 export async function getViteConfigForSiteDev(
   inlineConfig: InlineConfig = {}
@@ -123,20 +131,14 @@ export async function getViteConfigForSiteDev(
   const title = getTitle(siteConfig);
   const baiduAnalytics = siteConfig.site?.baiduAnalytics;
   const enableVConsole = siteConfig.site?.enableVConsole;
+  console.log("SITE_CONFIG", SITE_CONFIG);
   return {
-    root: join(__dirname, "..", "..", "..", "site/react"), // TODO Vue
+    root: REACT_SITE_DIR, // TODO Vue
     resolve: {
       alias: {
-        "site-desktop-shared": join(
-          __dirname,
-          "..",
-          "..",
-          "..",
-          "dist/site-desktop-shared.js"
-        ),
+        "site-config": SITE_CONFIG,
       },
     },
-
     plugins: [
       //distinguish react or vue
       react(), // TODO Vue

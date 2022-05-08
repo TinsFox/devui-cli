@@ -1,33 +1,17 @@
+import type { DecodedSourceMap, RawSourceMap } from "@ampproject/remapping";
+import remapping from "@ampproject/remapping";
+import type { FSWatcher } from "chokidar";
 import debug from "debug";
-import colors from "picocolors";
 import fs from "fs";
+import { builtinModules } from "module";
 import os from "os";
 import path from "path";
-import { pathToFileURL, URL } from "url";
-import {
-  FS_PREFIX,
-  DEFAULT_EXTENSIONS,
-  VALID_ID_PREFIX,
-  CLIENT_PUBLIC_PATH,
-  ENV_PUBLIC_PATH,
-  CLIENT_ENTRY,
-} from "./constants";
-import resolve from "resolve";
-import { builtinModules } from "module";
-import type { FSWatcher } from "chokidar";
-import remapping from "@ampproject/remapping";
-import type { DecodedSourceMap, RawSourceMap } from "@ampproject/remapping";
 import { performance } from "perf_hooks";
-import { parse as parseUrl, URLSearchParams } from "url";
+import colors from "picocolors";
+import { parse as parseUrl, pathToFileURL, URL, URLSearchParams } from "url";
 
 export function slash(p: string): string {
   return p.replace(/\\/g, "/");
-}
-
-// Strip valid id prefix. This is prepended to resolved Ids that are
-// not valid browser import specifiers by the importAnalysis plugin.
-export function unwrapId(id: string): string {
-  return id.startsWith(VALID_ID_PREFIX) ? id.slice(VALID_ID_PREFIX.length) : id;
 }
 
 export const flattenId = (id: string): string =>
@@ -73,40 +57,6 @@ try {
   isRunningWithYarnPnp = Boolean(require("pnpapi"));
 } catch {}
 
-const ssrExtensions = [".js", ".cjs", ".json", ".node"];
-
-export function resolveFrom(
-  id: string,
-  basedir: string,
-  preserveSymlinks = false,
-  ssr = false
-): string {
-  return resolve.sync(id, {
-    basedir,
-    extensions: ssr ? ssrExtensions : DEFAULT_EXTENSIONS,
-    // necessary to work with pnpm
-    preserveSymlinks: preserveSymlinks || isRunningWithYarnPnp || false,
-  });
-}
-
-/**
- * like `resolveFrom` but supports resolving `>` path in `id`,
- * for example: `foo > bar > baz`
- */
-export function nestedResolveFrom(
-  id: string,
-  basedir: string,
-  preserveSymlinks = false
-): string {
-  const pkgs = id.split(">").map((pkg) => pkg.trim());
-  try {
-    for (const pkg of pkgs) {
-      basedir = resolveFrom(pkg, basedir, preserveSymlinks);
-    }
-  } catch {}
-  return basedir;
-}
-
 // set in bin/vite.js
 const filter = process.env.VITE_DEBUG_FILTER;
 
@@ -137,61 +87,10 @@ export function createDebugger(
   };
 }
 
-function testCaseInsensitiveFS() {
-  if (!CLIENT_ENTRY.endsWith("client.mjs")) {
-    throw new Error(
-      `cannot test case insensitive FS, CLIENT_ENTRY const doesn't contain client.mjs`
-    );
-  }
-  if (!fs.existsSync(CLIENT_ENTRY)) {
-    throw new Error(
-      "cannot test case insensitive FS, CLIENT_ENTRY does not point to an existing file: " +
-        CLIENT_ENTRY
-    );
-  }
-  return fs.existsSync(CLIENT_ENTRY.replace("client.mjs", "cLiEnT.mjs"));
-}
-
-export const isCaseInsensitiveFS = testCaseInsensitiveFS();
-
 export const isWindows = os.platform() === "win32";
-
-const VOLUME_RE = /^[A-Z]:/i;
 
 export function normalizePath(id: string): string {
   return path.posix.normalize(isWindows ? slash(id) : id);
-}
-
-export function fsPathFromId(id: string): string {
-  const fsPath = normalizePath(
-    id.startsWith(FS_PREFIX) ? id.slice(FS_PREFIX.length) : id
-  );
-  return fsPath.startsWith("/") || fsPath.match(VOLUME_RE)
-    ? fsPath
-    : `/${fsPath}`;
-}
-
-export function fsPathFromUrl(url: string): string {
-  return fsPathFromId(cleanUrl(url));
-}
-
-/**
- * Check if dir is a parent of file
- *
- * Warning: parameters are not validated, only works with normalized absolute paths
- *
- * @param dir - normalized absolute path
- * @param file - normalized absolute path
- * @returns true if dir is a parent of file
- */
-export function isParentDirectory(dir: string, file: string): boolean {
-  if (!dir.endsWith("/")) {
-    dir = `${dir}/`;
-  }
-  return (
-    file.startsWith(dir) ||
-    (isCaseInsensitiveFS && file.toLowerCase().startsWith(dir.toLowerCase()))
-  );
 }
 
 export function ensureVolumeInPath(file: string): string {
@@ -242,18 +141,10 @@ export function getPotentialTsSrcPaths(filePath: string) {
 }
 
 const importQueryRE = /(\?|&)import=?(?:&|$)/;
-const internalPrefixes = [
-  FS_PREFIX,
-  VALID_ID_PREFIX,
-  CLIENT_PUBLIC_PATH,
-  ENV_PUBLIC_PATH,
-];
-const InternalPrefixRE = new RegExp(`^(?:${internalPrefixes.join("|")})`);
+
 const trailingSeparatorRE = /[\?&]$/;
 export const isImportRequest = (url: string): boolean =>
   importQueryRE.test(url);
-export const isInternalRequest = (url: string): boolean =>
-  InternalPrefixRE.test(url);
 
 export function removeImportQuery(url: string): string {
   return url.replace(importQueryRE, "$1").replace(trailingSeparatorRE, "");
@@ -307,30 +198,6 @@ export function timeFrom(start: number, subtract = 0): string {
     return colors.yellow(timeString);
   } else {
     return colors.red(timeString);
-  }
-}
-
-/**
- * pretty url for logging.
- */
-export function prettifyUrl(url: string, root: string): string {
-  url = removeTimestampQuery(url);
-  const isAbsoluteFile = url.startsWith(root);
-  if (isAbsoluteFile || url.startsWith(FS_PREFIX)) {
-    let file = path.relative(root, isAbsoluteFile ? url : fsPathFromId(url));
-    const seg = file.split("/");
-    const npmIndex = seg.indexOf(`node_modules`);
-    const isSourceMap = file.endsWith(".map");
-    if (npmIndex > 0) {
-      file = seg[npmIndex + 1];
-      if (file.startsWith("@")) {
-        file = `${file}/${seg[npmIndex + 2]}`;
-      }
-      file = `npm: ${colors.dim(file)}${isSourceMap ? ` (source map)` : ``}`;
-    }
-    return colors.dim(file);
-  } else {
-    return colors.dim(url);
   }
 }
 
