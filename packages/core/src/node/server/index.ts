@@ -9,6 +9,8 @@ import glob from "fast-glob";
 import { normalizePath } from "../utils";
 import { DOCS_DIR, REACT_SITE_DIR, SITE_CONFIG } from "../constants";
 import { removeExt, smartOutputFile } from "../utils/fs";
+import vitePluginMarkdown from "../vite-plugin-markdown";
+import Inspect from "vite-plugin-inspect";
 const genImportConfig = () => {
   return `import config from '${removeExt(normalizePath(""))}';`;
 };
@@ -141,7 +143,9 @@ export async function getViteConfigForSiteDev(
     },
     plugins: [
       //distinguish react or vue
+      Inspect(),
       react(), // TODO Vue
+      vitePluginMarkdown(),
       injectHtml({
         data: {
           ...siteConfig,

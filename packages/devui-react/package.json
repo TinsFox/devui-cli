@@ -24,8 +24,5 @@
   "bugs": {
     "url": "https://github.com/TinsFox/devui-cli/issues"
   },
-  "homepage": "https://github.com/TinsFox/devui-cli#readme",
-  "dependencies": {
-    "@devui/devui-cli": "workspace:*"
-  }
+  "homepage": "https://github.com/TinsFox/devui-cli#readme"
 }
