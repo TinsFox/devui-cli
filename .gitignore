@@ -4,9 +4,6 @@
 # npm
 node_modules
 
-# pnpm
-pnpm-lock.yaml
-
 # log
 *.log*
 
