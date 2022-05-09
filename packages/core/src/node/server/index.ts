@@ -7,10 +7,16 @@ import react from "@vitejs/plugin-react";
 import { injectHtml } from "vite-plugin-html";
 import glob from "fast-glob";
 import { normalizePath } from "../utils";
-import { DOCS_DIR, REACT_SITE_DIR, SITE_CONFIG } from "../constants";
+import {
+  DOCS_DIR,
+  REACT_SITE_DIR,
+  SITE_CONFIG,
+  VUE_SITE_DIR,
+} from "../constants";
 import { removeExt, smartOutputFile } from "../utils/fs";
 import vitePluginMarkdown from "../vite-plugin-markdown";
 import Inspect from "vite-plugin-inspect";
+import vue from "@vitejs/plugin-vue";
 const genImportConfig = () => {
   return `import config from '${removeExt(normalizePath(""))}';`;
 };
@@ -130,21 +136,22 @@ export async function getViteConfigForSiteDev(
   inlineConfig: InlineConfig = {}
 ): Promise<InlineConfig> {
   const siteConfig = await resolveConfig(inlineConfig, "serve", "development");
+  console.log("siteConfig", siteConfig);
   const title = getTitle(siteConfig);
   const baiduAnalytics = siteConfig.site?.baiduAnalytics;
   const enableVConsole = siteConfig.site?.enableVConsole;
   console.log("SITE_CONFIG", SITE_CONFIG);
   return {
-    root: REACT_SITE_DIR, // TODO Vue
+    root: siteConfig["frame"] === "react" ? REACT_SITE_DIR : VUE_SITE_DIR, // TODO Vue
     resolve: {
       alias: {
         "site-config": SITE_CONFIG,
       },
     },
     plugins: [
-      //distinguish react or vue
       Inspect(),
-      react(), // TODO Vue
+      react(),
+      vue(),
       vitePluginMarkdown(),
       injectHtml({
         data: {

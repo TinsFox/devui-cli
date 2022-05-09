@@ -24,6 +24,7 @@ export const PROJECT_ROOT = findRootDir(CWD);
 export const CLI_ROOT = join(__dirname, "..", "..");
 export const DOCS_DIR = join(PROJECT_ROOT, "docs");
 export const REACT_SITE_DIR = join(CLI_ROOT, "..", "src", "client", "react");
+export const VUE_SITE_DIR = join(CLI_ROOT, "..", "src", "client", "vue");
 export const CLI_DIST = join(CLI_ROOT, "dist");
 export const SITE_CONFIG = join(CLI_DIST, "site-config.js");
 export const REACT_SITE_DIR1 = join(CLI_ROOT, "..", "src", "client", "react");

@@ -31,6 +31,7 @@ export interface UserConfig {
   site?: ISite;
   /* site logo */
   logo?: string;
+  frame?: "react" | "vue-3";
 }
 
 export interface InlineConfig extends UserConfig {
