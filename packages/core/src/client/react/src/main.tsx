@@ -7,8 +7,8 @@ import { useRoutes } from "react-router-dom";
 import type { RouteObject } from "react-router-dom";
 import NoMatch from "./pages/404";
 import Index from "./pages";
-import { config } from "site-config";
-import md from "./README.md";
+import * as site from "site-config";
+// import md from "./README.md";
 const AppRouters: RouteObject[] = [
   {
     path: "/",
@@ -33,9 +33,7 @@ const AppRouters: RouteObject[] = [
 ];
 
 function App() {
-  console.log(config);
-  // console.log(documents);
-  console.log(`Template for render: ${md}`);
+  console.log(site)
   let element = useRoutes(AppRouters);
   return <>{element}</>;
 }

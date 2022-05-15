@@ -28,3 +28,4 @@ export const VUE_SITE_DIR = join(CLI_ROOT, "..", "src", "client", "vue");
 export const CLI_DIST = join(CLI_ROOT, "dist");
 export const SITE_CONFIG = join(CLI_DIST, "site-config.js");
 export const REACT_SITE_DIR1 = join(CLI_ROOT, "..", "src", "client", "react");
+export const PKG = require("../../../package.json")

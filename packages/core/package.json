@@ -38,9 +38,11 @@
   "homepage": "https://github.com/TinsFox/devui-cli#readme",
   "dependencies": {
     "@types/markdown-it": "^12.2.3",
+    "@types/markdown-it-container": "^2.0.5",
     "@vitejs/plugin-vue": "^2.3.2",
     "@vue/compiler-sfc": "^3.2.33",
     "esbuild": "^0.14.27",
+    "globby": "^13.1.1",
     "highlight.js": "^11.5.1",
     "less": "^3.12.2",
     "markdown-it": "^13.0.1",

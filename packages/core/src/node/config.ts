@@ -7,7 +7,7 @@ import { createDebugger, isObject, normalizePath } from "./utils";
 import { build } from "esbuild";
 
 const debug = createDebugger("devui:config");
-export type configFile = `devui.comfig.${string}`;
+export type configFile = `devui.config.${string}`;
 
 export interface INavItem {
   title: string;
@@ -61,17 +61,17 @@ export type ResolvedConfig = Readonly<
     env: Record<string, any>;
   }
 >;
-interface IResolveConfig{
-  site:{
-    baiduAnalytics:any
-    enableVConsole:boolean
+interface IResolveConfig {
+  site: {
+    baiduAnalytics: any
+    enableVConsole: boolean
   }
   title: string
-  frame:string
-  description:string
-  [key: string]:any
+  frame: string
+  description: string
+  [key: string]: any
 }
-export async function resolveConfig(
+export async function resolveUserConfig(
   inlineConfig: InlineConfig,
   command: "build" | "serve",
   defaultMode = "development"
@@ -256,7 +256,7 @@ export async function loadConfigFromFile(
   try {
     let userConfig: UserConfigExport | undefined;
     if (!userConfig) {
-      console.log("Bundle config file and transpile it to cjs using esbuild.");
+      // console.log("Bundle config file and transpile it to cjs using esbuild.");
       // Bundle config file and transpile it to cjs using esbuild.
       const bundled = await bundleConfigFile(resolvedPath);
       dependencies = bundled.dependencies;
