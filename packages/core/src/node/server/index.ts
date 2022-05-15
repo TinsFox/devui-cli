@@ -1,22 +1,23 @@
-import type { InlineConfig } from "vite";
-import { resolveConfig } from "../config";
-import { createServer as viteServer } from "vite";
-import colors from "picocolors";
-import { join, parse } from "path";
 import react from "@vitejs/plugin-react";
-import { injectHtml } from "vite-plugin-html";
+import vue from "@vitejs/plugin-vue";
 import glob from "fast-glob";
-import { normalizePath } from "../utils";
+import { join, parse } from "path";
+import colors from "picocolors";
+import type { InlineConfig } from "vite";
+import { createServer as viteServer } from "vite";
+import { injectHtml } from "vite-plugin-html";
+import Inspect from "vite-plugin-inspect";
+import { resolveConfig } from "../config";
 import {
   DOCS_DIR,
   REACT_SITE_DIR,
   SITE_CONFIG,
-  VUE_SITE_DIR,
+  VUE_SITE_DIR
 } from "../constants";
+import { normalizePath } from "../utils";
 import { removeExt, smartOutputFile } from "../utils/fs";
 import vitePluginMarkdown from "../vite-plugin-markdown";
-import Inspect from "vite-plugin-inspect";
-import vue from "@vitejs/plugin-vue";
+
 const genImportConfig = () => {
   return `import config from '${removeExt(normalizePath(""))}';`;
 };
@@ -87,7 +88,7 @@ export const config ={
 `;
   smartOutputFile(SITE_CONFIG, code);
 }
-async function genSiteEntry(): Promise<void> {
+async function resoleSiteEntry(): Promise<void> {
   return new Promise((resolve, reject) => {
     genSiteConfig();
     // TODO 没有 resole会停止往下执行
@@ -95,14 +96,14 @@ async function genSiteEntry(): Promise<void> {
   });
 }
 export async function compileSite() {
-  await genSiteEntry();
-  const config = await getViteConfigForSiteDev();
+  await resoleSiteEntry();
+  const config = await resolveSiteConfig();
   const server = await viteServer(config);
   await server.listen();
   const info = server.config.logger.info;
   info(
     colors.cyan(`\n  vite v${require("vite/package.json").version}`) +
-      colors.green(` dev server running at:\n`),
+    colors.green(` dev server running at:\n`),
     {
       clear: !server.config.logger.hasWarned,
     }
@@ -129,20 +130,24 @@ function getTitle(config: { title: string; description?: string }) {
 
   return title;
 }
-export async function genDesktop() {}
+export async function genDesktop() { }
+const frame: {
+  [key: string]: string,
+} = {
+  "react": REACT_SITE_DIR,
+  "vue-3": VUE_SITE_DIR
+}
 
-// doc site config
-export async function getViteConfigForSiteDev(
+export async function resolveSiteConfig(
   inlineConfig: InlineConfig = {}
 ): Promise<InlineConfig> {
+  console.log("env", process.env.NODE_ENV)
   const siteConfig = await resolveConfig(inlineConfig, "serve", "development");
-  console.log("siteConfig", siteConfig);
   const title = getTitle(siteConfig);
   const baiduAnalytics = siteConfig.site?.baiduAnalytics;
   const enableVConsole = siteConfig.site?.enableVConsole;
-  console.log("SITE_CONFIG", SITE_CONFIG);
   return {
-    root: siteConfig["frame"] === "react" ? REACT_SITE_DIR : VUE_SITE_DIR, // TODO Vue
+    root: frame[siteConfig["frame"]] || REACT_SITE_DIR,
     resolve: {
       alias: {
         "site-config": SITE_CONFIG,
@@ -150,8 +155,12 @@ export async function getViteConfigForSiteDev(
     },
     plugins: [
       Inspect(),
-      react(),
-      vue(),
+      react({
+        include: [/(\.tsx)$/, /\.md$/]
+      }),
+      vue({
+        include: [/(\.vue)$/, /\.md$/]
+      }),
       vitePluginMarkdown(),
       injectHtml({
         data: {

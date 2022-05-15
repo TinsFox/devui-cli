@@ -61,12 +61,21 @@ export type ResolvedConfig = Readonly<
     env: Record<string, any>;
   }
 >;
-
+interface IResolveConfig{
+  site:{
+    baiduAnalytics:any
+    enableVConsole:boolean
+  }
+  title: string
+  frame:string
+  description:string
+  [key: string]:any
+}
 export async function resolveConfig(
   inlineConfig: InlineConfig,
   command: "build" | "serve",
   defaultMode = "development"
-): Promise<any> {
+): Promise<IResolveConfig> {
   let config = inlineConfig;
   let mode = inlineConfig.mode || defaultMode;
 
@@ -274,8 +283,8 @@ export async function loadConfigFromFile(
     throw e;
   }
 }
-// TODO define menu type
 
+// TODO define menu type
 // define cli config
 export function defineConfig(config: UserConfigExport): UserConfigExport {
   return config;
