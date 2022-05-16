@@ -1,4 +1,3 @@
-// @ts-check
 import path from "path";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
@@ -6,7 +5,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import alias from "@rollup/plugin-alias";
 import MagicString from "magic-string";
-
+import { babel } from "@rollup/plugin-babel";
 /**
  * @type { import('rollup').RollupOptions }
  */
@@ -107,6 +106,9 @@ const createNodeConfig = (isProduction) => {
             replacement: `if (false) {`,
           },
         }),
+      babel({
+        exclude: "node_modules/**",
+      }),
       commonjs({
         extensions: [".js"],
         // Optional peer deps of ws. Native deps that are mostly for performance.

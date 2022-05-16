@@ -7,8 +7,8 @@ import vitePluginMarkdown from "../vite-plugin-markdown";
 import Inspect from "vite-plugin-inspect";
 import vue from "@vitejs/plugin-vue";
 import { normalizePath } from "../utils";
-import { globby } from 'globby';
-import { parse } from "path";
+import glob from "fast-glob";
+import { join, parse } from "path";
 import { smartOutputFile } from "../utils/fs";
 import { formatName, getHTMLMeta, getTitle } from "../share";
 const FRAME: {
@@ -27,19 +27,17 @@ function genImportDocuments(items: any[]) {
 }
 
 // 静态markdown
-async function resolveComponentDocuments(dirs: string) {
-  const page = (await globby(['**.md'], {
-    cwd: DOCS_DIR,
-    ignore: ['**/node_modules']
-  }))
-  const staticPage = page.map((path) => {
-    const pairs = parse(path).name.split(".");
-    return {
-      name: formatName(pairs[0], pairs[1]),
-      path: `${DOCS_DIR}/${path}`,
-    };
-  })
-  return staticPage;
+function resolveComponentDocuments(dirs: string) {
+  const staticDocs = glob
+    .sync(normalizePath(join(DOCS_DIR, "**/*.md")))
+    .map((path) => {
+      const pairs = parse(path).name.split(".");
+      return {
+        name: formatName(pairs[0], pairs[1]),
+        path,
+      };
+    });
+  return staticDocs;
 }
 const genExportAllDocuments = (items: any[]) => {
   return `export const documents = {
@@ -55,7 +53,7 @@ ${genExportAllDocuments(documents)}
  *
  */
 async function genSiteConfig() {
-  const staticDocuments = await resolveComponentDocuments(DOCS_DIR);
+  const staticDocuments = resolveComponentDocuments(DOCS_DIR);
   const documents = [...staticDocuments];
   const code = `
 ${genImportDocuments(documents)}
