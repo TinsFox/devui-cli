@@ -33,7 +33,7 @@ const AppRouters: RouteObject[] = [
 ];
 
 function App() {
-  console.log(site)
+  console.log(site);
   let element = useRoutes(AppRouters);
   return <>{element}</>;
 }

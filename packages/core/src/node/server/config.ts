@@ -1,9 +1,10 @@
+import { existsSync } from 'fs-extra';
 import react from "@vitejs/plugin-react";
 import { InlineConfig } from "vite";
 import { injectHtml } from "vite-plugin-html";
 import { resolveUserConfig } from "../config";
 import { DOCS_DIR, REACT_SITE_DIR, SITE_CONFIG, VUE_SITE_DIR } from "../constants";
-import vitePluginMarkdown from "../vite-plugin-markdown";
+import vitePluginMarkdownTOVue from "../vite-plugin-markdown2vue";
 import Inspect from "vite-plugin-inspect";
 import vue from "@vitejs/plugin-vue";
 import { normalizePath } from "../utils";
@@ -67,14 +68,39 @@ async function resolveSiteEntry(): Promise<void> {
     resolve();
   });
 }
+export const createPlugins = (siteConfig: any) => {
+  let plugins: any = [Inspect(), injectHtml({
+    data: {
+      title: getTitle(siteConfig),
+      baiduAnalytics: siteConfig.site?.baiduAnalytics,
+      enableVConsole: siteConfig.site?.enableVConsole,
+      ...siteConfig,
+      description: siteConfig.description,
+      meta: getHTMLMeta(siteConfig),
+    },
+  })]
+
+  if (siteConfig["frame"] === 'react') {
+    plugins.push(
+      react({
+        include: [/(\.tsx)$/, /\.md$/]
+      }),
+    )
+  } else {
+    plugins.push(
+      vue({
+        include: [/(\.vue)$/, /\.md$/]
+      }),
+      vitePluginMarkdownTOVue(),
+    )
+  }
+  return plugins
+}
 export async function resolveConfig(
   inlineConfig: InlineConfig = {}
 ): Promise<InlineConfig> {
   const siteConfig = await resolveUserConfig(inlineConfig, "serve", "development");
   await resolveSiteEntry();
-  const title = getTitle(siteConfig);
-  const baiduAnalytics = siteConfig.site?.baiduAnalytics;
-  const enableVConsole = siteConfig.site?.enableVConsole;
   return {
     root: FRAME[siteConfig["frame"]] || REACT_SITE_DIR,
     resolve: {
@@ -83,24 +109,7 @@ export async function resolveConfig(
       },
     },
     plugins: [
-      Inspect(),
-      react({
-        include: [/(\.tsx)$/, /\.md$/]
-      }),
-      vue({
-        include: [/(\.vue)$/, /\.md$/]
-      }),
-      vitePluginMarkdown(),
-      injectHtml({
-        data: {
-          ...siteConfig,
-          title,
-          description: siteConfig.description,
-          baiduAnalytics,
-          enableVConsole,
-          meta: getHTMLMeta(siteConfig),
-        },
-      }),
+      ...createPlugins(siteConfig)
     ],
     server: {
       port: 4000,

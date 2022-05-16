@@ -1,10 +1,10 @@
 import markdown from './markdown.js'
 import { stripScript, stripTemplate, genInlineComponentText } from './util'
 
-export default function vitePluginMarkdown(options = {}) {
+export default function vitePluginMarkdownTOVue(options = {}) {
 
   return {
-    name: 'vitePluginMarkdown',
+    name: 'vitePluginMarkdownTOVue',
     enforce: 'pre',
     transform: function (code: any, id: string) {
       // 截取.md文件
