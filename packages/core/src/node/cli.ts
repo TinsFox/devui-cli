@@ -9,7 +9,7 @@ cli
   .alias("dev") // alias to align with the script name
   .alias("start") // alias to align with the script name
   .option("--host [host]", `[string] specify hostname`)
-  .action(async (root: string, options: any) => {
+  .action(async () => {
     const { createServer } = await import("./server");
     await createServer();
   });

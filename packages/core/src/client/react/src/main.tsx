@@ -8,7 +8,7 @@ import type { RouteObject } from "react-router-dom";
 import NoMatch from "./pages/404";
 import Index from "./pages";
 import * as site from "site-config";
-// import md from "./README.md";
+
 const AppRouters: RouteObject[] = [
   {
     path: "/",
@@ -16,7 +16,7 @@ const AppRouters: RouteObject[] = [
       {
         path: "/",
         index: true,
-        element: <Index />,
+        element: <Index />
       },
       {
         path: "/",
@@ -24,16 +24,15 @@ const AppRouters: RouteObject[] = [
         children: [
           {
             path: "404",
-            element: <NoMatch />,
-          },
-        ],
-      },
-    ],
-  },
+            element: <NoMatch />
+          }
+        ]
+      }
+    ]
+  }
 ];
 
 function App() {
-  console.log(site);
   let element = useRoutes(AppRouters);
   return <>{element}</>;
 }

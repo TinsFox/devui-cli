@@ -5,6 +5,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import alias from "@rollup/plugin-alias";
 import MagicString from "magic-string";
+
 /**
  * @type { import('rollup').RollupOptions }
  */
@@ -45,14 +46,11 @@ const sharedNodeOptions = {
  * @returns {import('rollup').RollupOptions}
  */
 const createNodeConfig = (isProduction) => {
-  /**
-   * @type { import('rollup').RollupOptions }
-   */
-  const nodeConfig = {
+  return {
     ...sharedNodeOptions,
     input: {
       index: path.resolve(__dirname, "src/node/index.ts"),
-      cli: path.resolve(__dirname, "src/node/cli.ts"),
+      cli: path.resolve(__dirname, "src/node/cli.ts")
     },
     output: {
       ...sharedNodeOptions.output,
@@ -86,25 +84,25 @@ const createNodeConfig = (isProduction) => {
         // in development we need to rely on the rollup ts plugin
         ...(isProduction
           ? {
-              declaration: false,
-              sourceMap: false,
-            }
+            declaration: false,
+            sourceMap: false,
+          }
           : {
-              declaration: true,
-              declarationDir: path.resolve(__dirname, "dist/node"),
-            }),
+            declaration: true,
+            declarationDir: path.resolve(__dirname, "dist/node"),
+          }),
       }),
       // Some deps have try...catch require of optional deps, but rollup will
       // generate code that force require them upfront for side effects.
       // Shim them with eval() so rollup can skip these calls.
       isProduction &&
-        shimDepsPlugin({
-          // cac re-assigns module.exports even in its mjs dist
-          "cac/dist/index.mjs": {
-            src: `if (typeof module !== "undefined") {`,
-            replacement: `if (false) {`,
-          },
-        }),
+      shimDepsPlugin({
+        // cac re-assigns module.exports even in its mjs dist
+        "cac/dist/index.mjs": {
+          src: `if (typeof module !== "undefined") {`,
+          replacement: `if (false) {`,
+        },
+      }),
       commonjs({
         extensions: [".js"],
         // Optional peer deps of ws. Native deps that are mostly for performance.
@@ -114,8 +112,6 @@ const createNodeConfig = (isProduction) => {
       json(),
     ],
   };
-
-  return nodeConfig;
 };
 
 /**
